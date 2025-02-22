@@ -50,7 +50,6 @@ def load_diabetes_models():
 # Main app
 def main():
     st.title("Prediction Application")
-    prediction = None
 
     # Sidebar for navigation
     st.sidebar.title("Navigation")
@@ -87,7 +86,6 @@ def main():
         st.write("Enter the features to predict diabetes progression")
 
         # Input features
-        prediction = None
         age = st.number_input("Age")
         sex = st.selectbox("Sex", ["Male", "Female", "Other"])
         bmi = st.number_input("BMI")
