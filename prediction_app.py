@@ -17,6 +17,7 @@ uri = "mongodb+srv://saakshitha:saakshi@cluster0.yl20d.mongodb.net/?retryWrites=
 client = MongoClient(uri, server_api=ServerApi('1'))
 db = client['predictiondatabase']
 collection = db['predictioncollection']
+
 # Load models
 def load_ice_cream_models():
     with open("polynomial_models.pkl", 'rb') as file:
@@ -68,17 +69,17 @@ def main():
             data = np.array([[temp]])
             prediction = predict_ice_cream(models, degree, data)
             st.write(f"Predicted Ice Cream Sales with polynomial degree {degree}: {prediction[0]}")
+            data = {
+                "Temperature": temp,
+                "Prediction": prediction[0]
+            }
+            collection.insert_one(data)
 
         if st.button("Visualize Ice Cream Sales"):
             models = load_ice_cream_models()
             st.write("Visualize the data and model predictions")
             data = pd.read_csv('Ice-cream-selling-data-csv.csv')
             visualize_ice_cream(models, degree, data)
-        data = {
-            "Temperature": temp,
-            "Prediction": prediction[0]
-        }
-        collection.insert_one(data)
 
     # Diabetes Prediction
     elif app_mode == "Diabetes Prediction":
@@ -116,6 +117,20 @@ def main():
             elif model_type == "Lasso":
                 prediction = lasso_model.predict(input_data_scaled)
                 st.write(f"Lasso Model Prediction: {prediction[0]}")
+            data = {
+                "Age": age,
+                "Sex": sex,
+                "BMI": bmi,
+                "Blood Pressure": bp,
+                "S1": s1,
+                "S2": s2,
+                "S3": s3,
+                "S4": s4,
+                "S5": s5,
+                "S6": s6,
+                "Prediction": prediction[0]
+            }
+            collection.insert_one(data)
 
         if st.button("Visualize Diabetes Data"):
             st.write("Visualize the data and model predictions")
@@ -130,20 +145,6 @@ def main():
             plt.title('Diabetes Progression Visualization')
             plt.legend()
             st.pyplot(plt)
-        data = {
-            "Age": age,
-            "Sex": sex,
-            "BMI": bmi,
-            "Blood Pressure": bp,
-            "S1": s1,
-            "S2": s2,
-            "S3": s3,
-            "S4": s4,
-            "S5": s5,
-            "S6": s6,
-            "Prediction": prediction[0]
-        }
-        collection.insert_one(data)
-        
+
 if __name__ == "__main__":
     main()
