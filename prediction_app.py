@@ -10,6 +10,13 @@ from sklearn import metrics
 import pickle
 from sklearn.datasets import load_diabetes
 
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
+uri = "mongodb+srv://saakshitha:saakshi@cluster0.yl20d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(uri, server_api=ServerApi('1'))
+db = client['predictiondatabase']
+collection = db['predictioncollection']
 # Load models
 def load_ice_cream_models():
     with open("polynomial_models.pkl", 'rb') as file:
@@ -67,6 +74,11 @@ def main():
             st.write("Visualize the data and model predictions")
             data = pd.read_csv('Ice-cream-selling-data-csv.csv')
             visualize_ice_cream(models, degree, data)
+        data = {
+            "Temperature": temp,
+            "Prediction": prediction[0]
+        }
+        collection.insert_one(data)
 
     # Diabetes Prediction
     elif app_mode == "Diabetes Prediction":
@@ -118,6 +130,20 @@ def main():
             plt.title('Diabetes Progression Visualization')
             plt.legend()
             st.pyplot(plt)
-
+        data = {
+            "Age": age,
+            "Sex": sex,
+            "BMI": bmi,
+            "Blood Pressure": bp,
+            "S1": s1,
+            "S2": s2,
+            "S3": s3,
+            "S4": s4,
+            "S5": s5,
+            "S6": s6,
+            "Prediction": prediction[0]
+        }
+        collection.insert_one(data)
+        
 if __name__ == "__main__":
     main()
